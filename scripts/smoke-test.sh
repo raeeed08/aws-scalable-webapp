@@ -6,7 +6,7 @@ URL=$(terraform output -raw app_url)
 ALB=$(terraform output -raw alb_dns_name)
 
 echo "== 1. Load balancing across instances and AZs (10 requests)"
-for i in $(seq 10); do curl -s "$URL/api/info" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["instance"], d["az"])'; done | sort | uniq -c
+for _ in $(seq 10); do curl -s "$URL/api/info" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["instance"], d["az"])'; done | sort | uniq -c
 
 echo "== 2. Database through the app"
 curl -s "$URL/api/db"; echo
