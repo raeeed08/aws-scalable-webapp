@@ -1,0 +1,67 @@
+#!/bin/bash
+# Boot script: installs the app, runs it with gunicorn under systemd, ships logs and memory/disk metrics.
+set -euxo pipefail
+
+dnf install -y python3-pip amazon-cloudwatch-agent
+python3 -m pip install --quiet "flask==3.0.*" "gunicorn==22.*" "psycopg[binary]==3.2.*" "boto3==1.*"
+
+useradd --system --home /opt/webapp --shell /sbin/nologin webapp || true
+mkdir -p /opt/webapp
+cat > /opt/webapp/app.py <<'APP'
+${app_py}
+APP
+chown -R webapp:webapp /opt/webapp
+touch /var/log/webapp.log && chown webapp:webapp /var/log/webapp.log
+
+cat > /etc/systemd/system/webapp.service <<UNIT
+[Unit]
+Description=Web application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=webapp
+WorkingDirectory=/opt/webapp
+Environment=AWS_REGION=${region}
+Environment=DB_HOST=${db_host}
+Environment=DB_NAME=${db_name}
+Environment=DB_SECRET_ARN=${db_secret_arn}
+Environment=APP_ENV=${environment}
+ExecStart=/usr/local/bin/gunicorn --workers 2 --threads 4 --bind 0.0.0.0:8080 --access-logfile /var/log/webapp.log --error-logfile /var/log/webapp.log app:app
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+systemctl enable --now webapp
+
+cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<'CWA'
+{
+  "agent": { "metrics_collection_interval": 60 },
+  "metrics": {
+    "namespace": "WebApp",
+    "append_dimensions": { "AutoScalingGroupName": "$${aws:AutoScalingGroupName}", "InstanceId": "$${aws:InstanceId}" },
+    "metrics_collected": {
+      "mem": { "measurement": ["mem_used_percent"] },
+      "disk": { "measurement": ["used_percent"], "resources": ["/"] }
+    }
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          { "file_path": "/var/log/webapp.log", "log_group_name": "${log_group}", "log_stream_name": "{instance_id}" }
+        ]
+      }
+    }
+  }
+}
+CWA
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
