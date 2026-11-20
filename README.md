@@ -64,7 +64,7 @@ heal and scale itself.
 | **RDS Multi-AZ** | PostgreSQL 16, synchronous standby in the other AZ, encrypted, TLS required, 7-day backups, password managed in Secrets Manager | Automatic failover without changing the endpoint |
 | **Route 53** | Alias records (`app.` → CloudFront, `origin.` → ALB) when a domain is set; HTTPS health check on `/health` always | DNS and an outside-in check of the whole path |
 | **Systems Manager** | Session Manager through the instance role | Shell access with no SSH key, no port 22 and no bastion host |
-| **CloudWatch + SNS** | Dashboard, 11 alarms, app/WAF/VPC/RDS logs, memory and disk from the CloudWatch agent, email alerts | See problems before users report them |
+| **CloudWatch + SNS** | Dashboard, 10 email alarms (+1 that drives step scaling), app/WAF/VPC/RDS logs, memory and disk from the CloudWatch agent, email alerts | See problems before users report them |
 | **Secrets Manager** | Database password created and stored by RDS | No password in code, Terraform state or user data |
 
 ## Network design
