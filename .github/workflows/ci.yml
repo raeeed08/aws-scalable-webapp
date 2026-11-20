@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: terraform
+        working-directory: deployment/terraform
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -24,12 +24,12 @@ jobs:
       - name: Checkov (security scan; accepted risks are documented inline with #checkov:skip)
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: terraform
+          directory: deployment/terraform
           framework: terraform
           quiet: true
   scripts:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck scripts/*.sh
-      - run: python3 -m py_compile app/app.py
+      - run: shellcheck deployment/scripts/*.sh
+      - run: python3 -m py_compile source/app/app.py

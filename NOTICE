@@ -1,0 +1,12 @@
+Scalable Web Application with ALB and Auto Scaling
+Copyright 2026 Raed Aroua
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This project uses third-party software, each under its own license:
+  - Terraform AWS and Random providers (HashiCorp) .......... MPL-2.0
+  - Flask, gunicorn ........................................... BSD-3-Clause, MIT
+  - psycopg ................................................... LGPL-3.0
+  - boto3 (AWS SDK for Python) ................................ Apache-2.0
+AWS architecture icons in architecture.drawio are provided by draw.io (diagrams.net) under the AWS
+Architecture Icons terms of use.

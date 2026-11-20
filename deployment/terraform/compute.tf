@@ -47,7 +47,7 @@ resource "aws_launch_template" "app" {
     db_name       = aws_db_instance.main.db_name
     db_secret_arn = aws_db_instance.main.master_user_secret[0].secret_arn
     log_group     = aws_cloudwatch_log_group.app.name
-    app_py        = file("${path.module}/../app/app.py")
+    app_py        = file("${path.module}/../../source/app/app.py")
     environment   = var.environment
   }))
 

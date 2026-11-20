@@ -94,7 +94,7 @@ resource "aws_s3_bucket_policy" "static" {
 }
 
 locals {
-  static_dir   = "${path.module}/../app/static"
+  static_dir   = "${path.module}/../../source/app/static"
   static_types = { css = "text/css", js = "application/javascript", svg = "image/svg+xml", png = "image/png", ico = "image/x-icon" }
 }
 
