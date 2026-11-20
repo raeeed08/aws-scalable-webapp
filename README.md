@@ -9,7 +9,7 @@ Terraform, monitored with CloudWatch, and reachable for administration only thro
 
 ![Solution architecture](docs/architecture.png)
 
-*Diagram source: [docs/architecture.svg](docs/architecture.svg) (editable SVG).*
+*Editable diagram: [docs/architecture.drawio](docs/architecture.drawio) (open it at [app.diagrams.net](https://app.diagrams.net), official AWS icons). SVG version: [docs/architecture.svg](docs/architecture.svg).*
 
 ---
 
@@ -233,7 +233,7 @@ That is about 0.20 USD per hour. **Deploy, record the demo, and destroy the same
 ```
 .
 ├── README.md                      this document
-├── docs/architecture.svg|png      solution architecture diagram
+├── docs/architecture.drawio       solution architecture diagram (draw.io, AWS icons); .svg and .png exports
 ├── app/                           Flask application, static assets, requirements
 ├── terraform/
 │   ├── versions.tf                providers (region + us-east-1 for CloudFront certificates and health-check alarm)
